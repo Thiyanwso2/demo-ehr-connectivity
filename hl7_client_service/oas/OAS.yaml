@@ -1,0 +1,50 @@
+openapi: 3.0.1
+info:
+  title: HL7v2 Admit API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+paths:
+  /api/admit:
+    post:
+      summary: Send HL7v2 Admit Message
+      requestBody:
+        required: true
+        content:
+          text/plain:
+            schema:
+              type: string
+              description: HL7v2 message payload as plain text
+              example: "MSH|^~\\&|SendingApp|SendingFac|ReceivingApp|ReceivingFac|202508061230||ADT^A01|123456|P|2.4\rPID|1||12345^^^Hospital^MR||Doe^John"
+      responses:
+        '200':
+          description: HL7v2 Admit Acknowledgement Response (ACK)
+          content:
+            text/plain:
+              schema:
+                type: string
+                description: HL7v2 ACK message
+                example: "MSH|^~\\&|ReceivingApp|ReceivingFac|SendingApp|SendingFac|202508061230||ACK^A01|123456|P|2.4\rMSA|AA|123456"
+        '400':
+          description: Invalid HL7v2 message or unsupported message type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: HL7v2 service unavailable or internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        errorCode:
+          type: string
+          example: "E019 PARSE_ERROR"
+        errorMessage:
+          type: string
+          example: "Failed to parse the HL7 message"
