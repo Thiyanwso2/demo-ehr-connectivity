@@ -1,0 +1,103 @@
+openapi: 3.0.1
+info:
+  title: ImagingStudy API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8585
+paths:
+  /imagingStudy:
+    post:
+      summary: Create a new ImagingStudy resource
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImagingStudy'
+      responses:
+        '202':
+          description: ImagingStudy successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImagingStudy'
+        '400':
+          description: Invalid input payload
+  /imagingStudy/{id}:
+    get:
+      summary: Get ImagingStudy by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ImagingStudy resource found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImagingStudy'
+        '404':
+          description: ImagingStudy not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+components:
+  schemas:
+    ImagingStudy:
+      type: object
+      properties:
+        resourceType:
+          type: string
+          example: ImagingStudy
+        id:
+          type: integer
+          example: 1
+        status:
+          type: string
+          example: available
+        subject:
+          type: string
+          example: Patient/123
+        started:
+          type: string
+          format: date-time
+          example: "2025-08-06T10:00:00Z"
+        series:
+          type: array
+          items:
+            $ref: '#/components/schemas/Series'
+    Series:
+      type: object
+      properties:
+        uid:
+          type: string
+          example: "1.2.840.113619.2.55.3.604688464.501.1598465092.467"
+        modality:
+          type: string
+          example: "CT"
+        description:
+          type: string
+          example: "CT Chest with contrast"
+        instances:
+          type: array
+          items:
+            $ref: '#/components/schemas/Instance'
+    Instance:
+      type: object
+      properties:
+        uid:
+          type: string
+          example: "1.2.840.113619.2.55.3.604688464.501.1598465092.468"
+        sopClass:
+          type: string
+          example: "1.2.840.10008.5.1.4.1.1.2"
+        title:
+          type: string
+          example: "Chest CT Image"
