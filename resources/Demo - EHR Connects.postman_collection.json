@@ -1,0 +1,268 @@
+{
+	"info": {
+		"_postman_id": "0c682c84-de33-44ba-938d-2a0c8e8d03fd",
+		"name": "Demo - EHR Connects",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "2846974",
+		"_collection_link": "https://interstellar-rocket-8666.postman.co/workspace/New-Team-Workspace~386bcae4-e9e6-4881-8a97-dddf0e72d922/collection/2846974-0c682c84-de33-44ba-938d-2a0c8e8d03fd?action=share&source=collection_link&creator=2846974"
+	},
+	"item": [
+		{
+			"name": "Local",
+			"item": [
+				{
+					"name": "Get Imaging Study",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:9898/fhir/r4/ImagingStudy/102",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9898",
+							"path": [
+								"fhir",
+								"r4",
+								"ImagingStudy",
+								"102"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "HL7 - Create Admit Event",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "MSH|^~\\&|MESA_ADT|XYZ_ADMITTING|iFW|XYZ|||ADT^A01|MESA1|P|2.4\nEVN||202408051000\nPID|1||12345^MRN|56789^ANOTHER_ID||Doe^John||19800101|M|||123 Main St^^Anytown^CA^91234\nPV1|1|I|Lobby^101|||||12345^Doctor^John",
+							"options": {
+								"raw": {
+									"language": "text"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/admit",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"admit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EPIC - Get Patient",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:9089/fhir/r4/Patient/eAB3mDIBBcyUKviyzrxsnAw3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9089",
+							"path": [
+								"fhir",
+								"r4",
+								"Patient",
+								"eAB3mDIBBcyUKviyzrxsnAw3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Remote",
+			"item": [
+				{
+					"name": "Get Imaging Study",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Test-Key",
+								"value": "eyJraWQiOiJnYXRld2F5X2NlcnRpZmljYXRlX2FsaWFzIiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiI0NWUyM2MyZC1kYmI4LTRiZDAtODI0NS0xMzFmZGFhNmY2ZmFAY2FyYm9uLnN1cGVyIiwiYXVkIjoiY2hvcmVvOmRlcGxveW1lbnQ6c2FuZGJveCIsIm9yZ2FuaXphdGlvbiI6eyJ1dWlkIjoiYzMyNjE4Y2YtMzg5ZC00NGYxLTkzZWUtYjY3YTM0NjhhYWUzIn0sImlzcyI6Imh0dHBzOlwvXC9zdHMuY2hvcmVvLmRldjo0NDNcL2FwaVwvYW1cL3B1Ymxpc2hlclwvdjJcL2FwaXNcL2ludGVybmFsLWtleSIsImtleXR5cGUiOiJTQU5EQk9YIiwic3Vic2NyaWJlZEFQSXMiOlt7InN1YnNjcmliZXJUZW5hbnREb21haW4iOm51bGwsIm5hbWUiOiJtb2NrLWltYWdpbmctc2VydmljZSAtIGltYWdpbmctc2VydmljZSIsImNvbnRleHQiOiJcL2MzMjYxOGNmLTM4OWQtNDRmMS05M2VlLWI2N2EzNDY4YWFlM1wvZWhyLWNvbm5lY3RzXC9tb2NrLWltYWdpbmctc2VydmljZVwvdjEuMCIsInB1Ymxpc2hlciI6ImNob3Jlb19wcm9kX2FwaW1fYWRtaW4iLCJ2ZXJzaW9uIjoidjEuMCIsInN1YnNjcmlwdGlvblRpZXIiOm51bGx9XSwiZXhwIjoxNzU0NDc2MjIwLCJ0b2tlbl90eXBlIjoiSW50ZXJuYWxLZXkiLCJpYXQiOjE3NTQ0NzU2MjAsImp0aSI6IjUzMDlhODdmLWJiNWYtNDRhZC1iZTk5LTRlMDQzMGM3OGZkYiJ9.E1-bB0_Q1sDbzj1JQ_60HtcYJ4_ixCVFxAXhR0f_gFhe-uTsarSW8mEXNCVZS7FYl9D2_0qBaCi3fH9msTaFLcfg4wh2RSZUQYffXlT-HhPBlLu4UmoF2KV9pDc3VDY5IlDtdlRsPFjQJPENJxSA0ow2Ko9MZojzpjHwtbHGpl7gNIVItceNVHaQ6TOJL2cPzasMhASpC13zlFaAwIFLfnicQ-R_PmO3lLK7mO0SZgP4tm6FtydXvRzbEzVNuLC3fazUHRhvFL7unWzdufyH3IszQ8IIXiVWpg3BWRV4o7VKjxzGer1UGTG0ul6mCxHR0jXmeZUtR2GZRhAKYZoBxCNfK9-42axu4O4fYOsNKI5cZ_D0NqUNeDMNV62j2YHMWe-5x2E9mnBlSkjJuR8p3xk8zPZJcpJ0LvcJiXa-Y7WgpUcfAQkax-QRdY0M8nCNIVK1mf_MOedLVqTDBmmaCOU-1f1pEnSoxxHhJzBAuctVUosfYb_Ruv05AQqQi4Q-NtmcCM7L2Dgi-DFezqcucZ-czW7IvwQ38OqBFJnadwlsT17MHkVMQKs_sJwtVTHncCLq_GfeeAOgLhAPPJYxjMxeY8AEMD_MS51cf2r0HhdjithUj27I--QlHLhfopxzzW2b3RSSMqeCAPHAIEI4Utdq5o3OZ3gcRK4-qxVn7bg"
+							}
+						],
+						"url": {
+							"raw": "https://c32618cf-389d-44f1-93ee-b67a3468aae3-dev.e1-us-east-azure.choreoapis.dev/ehr-connects/mock-imaging-service/v1.0/imagingStudy/102",
+							"protocol": "https",
+							"host": [
+								"c32618cf-389d-44f1-93ee-b67a3468aae3-dev",
+								"e1-us-east-azure",
+								"choreoapis",
+								"dev"
+							],
+							"path": [
+								"ehr-connects",
+								"mock-imaging-service",
+								"v1.0",
+								"imagingStudy",
+								"102"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "HL7 - Create Admit Event",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "text/plain"
+							},
+							{
+								"key": "Content-Type",
+								"value": "text/plain"
+							},
+							{
+								"key": "Test-Key",
+								"value": "eyJraWQiOiJnYXRld2F5X2NlcnRpZmljYXRlX2FsaWFzIiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiI0NWUyM2MyZC1kYmI4LTRiZDAtODI0NS0xMzFmZGFhNmY2ZmFAY2FyYm9uLnN1cGVyIiwiYXVkIjoiY2hvcmVvOmRlcGxveW1lbnQ6c2FuZGJveCIsIm9yZ2FuaXphdGlvbiI6eyJ1dWlkIjoiYzMyNjE4Y2YtMzg5ZC00NGYxLTkzZWUtYjY3YTM0NjhhYWUzIn0sImlzcyI6Imh0dHBzOlwvXC9zdHMuY2hvcmVvLmRldjo0NDNcL2FwaVwvYW1cL3B1Ymxpc2hlclwvdjJcL2FwaXNcL2ludGVybmFsLWtleSIsImtleXR5cGUiOiJTQU5EQk9YIiwic3Vic2NyaWJlZEFQSXMiOlt7InN1YnNjcmliZXJUZW5hbnREb21haW4iOm51bGwsIm5hbWUiOiJobDctY2xpZW50LXNlcnZpY2UgLSBobDctY2xpZW50LXNlcnZpY2UiLCJjb250ZXh0IjoiXC9jMzI2MThjZi0zODlkLTQ0ZjEtOTNlZS1iNjdhMzQ2OGFhZTNcL2Voci1jb25uZWN0c1wvaGw3LWNsaWVudC1zZXJ2aWNlXC92MS4wIiwicHVibGlzaGVyIjoiY2hvcmVvX3Byb2RfYXBpbV9hZG1pbiIsInZlcnNpb24iOiJ2MS4wIiwic3Vic2NyaXB0aW9uVGllciI6bnVsbH1dLCJleHAiOjE3NTQ0NzY1MzMsInRva2VuX3R5cGUiOiJJbnRlcm5hbEtleSIsImlhdCI6MTc1NDQ3NTkzMywianRpIjoiZGZhMzcxMmUtYWEyMC00YjVlLWI1N2EtYmIwOWU3ZDA0NTBiIn0.MOD1MtFWieRp4mxMjgo9zsfEMnMqC2rV5Suvd6OkezPQTpQ_E1ndk032DYFR3IvCPFUZUZ4wnm7735dVYnVNTzRdELN24uUa1jMB4k05C6pLM9fVIyNqkJaFZWmld57QHZYl3jyVwM7fPggygz7E7bQbahAMOzefxqJY4cWSX1uyTTPEYhpSCD75ZhPP0Q3g8Mpt20enmZoR3N-MoNEng8OX4g8PWMWP98dSto6N7HKpU3tmknEREXcJJAGhZNW7kmcuxznu8njUMHKo2zD6NmcKpOBe9lH1-y5_hpWdCoQnJU4kkzGRQOTj3VsS4BcOjkCcdNVHMq6OR4-LNWmxl-1zWuXkO2iY5rV8fri9npUSQ_Op-cvhkO7cHJhOWUMwu9PoB36CI1ouEb3Cvho4v2sf4sO4AoEEt8RBVJYTmTQrJfHR8uUcPrw0jpolitx_wT9erBAO_SYKJYh4ZCZqGhj3V7cehKFil6558PeMUfN9NqUMV2m-8AEA2i6rY2g7y7DSiEkoxBlagR0whXyI28D1IL86m0iG-NPWWeGsaX3QVra5ZZ3nEg698F1g6tnVVfhtV3xVGRjltOFFeb5sIcmR7sCLbDswnQk-1RRxKM6Ev25dj2dU7wNLo-jxQ3a4BRrZeB4vjiglOuNcpzGSQJL23D1oPAYR-d2HYUa8N1E"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "MSH|^~\\&|MESA_ADT|XYZ_ADMITTING|iFW|XYZ|||ADT^A01|MESA1|P|2.4\nEVN||202408051000\nPID|1||12345^MRN|56789^ANOTHER_ID||Doe^John||19800101|M|||123 Main St^^Anytown^CA^91234\nPV1|1|I|Lobby^101|||||12345^Doctor^John",
+							"options": {
+								"raw": {
+									"language": "text"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://c32618cf-389d-44f1-93ee-b67a3468aae3-dev.e1-us-east-azure.choreoapis.dev/ehr-connects/hl7-client-service/v1.0/api/admit",
+							"protocol": "https",
+							"host": [
+								"c32618cf-389d-44f1-93ee-b67a3468aae3-dev",
+								"e1-us-east-azure",
+								"choreoapis",
+								"dev"
+							],
+							"path": [
+								"ehr-connects",
+								"hl7-client-service",
+								"v1.0",
+								"api",
+								"admit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cerner - Get Patient",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/fhir+json"
+							},
+							{
+								"key": "Test-Key",
+								"value": "eyJraWQiOiJnYXRld2F5X2NlcnRpZmljYXRlX2FsaWFzIiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiI0NWUyM2MyZC1kYmI4LTRiZDAtODI0NS0xMzFmZGFhNmY2ZmFAY2FyYm9uLnN1cGVyIiwiYXVkIjoiY2hvcmVvOmRlcGxveW1lbnQ6c2FuZGJveCIsIm9yZ2FuaXphdGlvbiI6eyJ1dWlkIjoiYzMyNjE4Y2YtMzg5ZC00NGYxLTkzZWUtYjY3YTM0NjhhYWUzIn0sImlzcyI6Imh0dHBzOlwvXC9zdHMuY2hvcmVvLmRldjo0NDNcL2FwaVwvYW1cL3B1Ymxpc2hlclwvdjJcL2FwaXNcL2ludGVybmFsLWtleSIsImtleXR5cGUiOiJTQU5EQk9YIiwic3Vic2NyaWJlZEFQSXMiOlt7InN1YnNjcmliZXJUZW5hbnREb21haW4iOm51bGwsIm5hbWUiOiJjZXJuZXItZmhpci1hZG1pbmlzdHJhdGlvIC0gQ2VybmVyIEZISVIgUGF0aWVudCBBUEkiLCJjb250ZXh0IjoiXC9jMzI2MThjZi0zODlkLTQ0ZjEtOTNlZS1iNjdhMzQ2OGFhZTNcL2Voci1jb25uZWN0c1wvY2VybmVyLWZoaXItYWRtaW5pc3RyYXRpb1wvdjEuMCIsInB1Ymxpc2hlciI6ImNob3Jlb19wcm9kX2FwaW1fYWRtaW4iLCJ2ZXJzaW9uIjoidjEuMCIsInN1YnNjcmlwdGlvblRpZXIiOm51bGx9XSwiZXhwIjoxNzU0NDc2NjQ3LCJ0b2tlbl90eXBlIjoiSW50ZXJuYWxLZXkiLCJpYXQiOjE3NTQ0NzYwNDcsImp0aSI6IjEyMjJkYjc3LWUxYTgtNDlkNC04OGExLTkxMmY3OWI0YjM3ZiJ9.Y-anez27vfS-sc7lTiZYqFy_a2Lk_tE0qhFR6X7VBDf1Qe1korVU-xOb8bgzczqsU90iprT2Vg2SbN3yRg010dE3LkeK1MuD2rK7MLdkjvlrZcof0bmn7J1e4X0jnObV79mgUXpF9Cn1TDzSL4mDSQj49GUpFhvA-6xv4_0Gp9mLNlSnYZ0sU3Huw--NS4eRNspW2o-2SnWbm2NalXG-dqs8RDZbh8Rr4S7ARM5FzW843_dA8Cz3BGUsO_7jf5tCWl2XG-dy26uj-XJfdbuff4bjYWYYn5MQ1_KBeiB4ymS8_y0O-2lalzxuEbIegJgBCnU8g8KjgfyvvQN3FS-rcwasYC6x2FkaFPShE4wpuuH3jW8dAlZSQlw-SEdNNbm28Levx4wgousFg1RY6li8_8qsB4TXgzxCQ7YGu84aabksknMw6HPdr2mazCEhul4UexJ1_kHWqN1WSJ5O8Ceu2nQIEAXiNZh24mNCoiSQ4oQt4Wm2C55URvwOum7AJyoGwh3clIJrSd2xajF0D3hrapUGnjxDzkneXMdJg05IvZ65Hvb0lwlWCeSHayswSw5XSUpfg-IsdFBPB_crr53HKPrBV1jsCpxNfxH_MpPaBWZgO9GOo0CL8139gZW3__sPzcOPaIFD55rvQScYpokOl16EOLuQZP3L6a2Vyaxv_z0"
+							}
+						],
+						"url": {
+							"raw": "https://c32618cf-389d-44f1-93ee-b67a3468aae3-dev.e1-us-east-azure.choreoapis.dev/ehr-connects/cerner-fhir-administratio/v1.0/fhir/r4/Patient/12970723",
+							"protocol": "https",
+							"host": [
+								"c32618cf-389d-44f1-93ee-b67a3468aae3-dev",
+								"e1-us-east-azure",
+								"choreoapis",
+								"dev"
+							],
+							"path": [
+								"ehr-connects",
+								"cerner-fhir-administratio",
+								"v1.0",
+								"fhir",
+								"r4",
+								"Patient",
+								"12970723"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EPIC - Get Patient",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/fhir+json"
+							},
+							{
+								"key": "Test-Key",
+								"value": "eyJraWQiOiJnYXRld2F5X2NlcnRpZmljYXRlX2FsaWFzIiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiI0NWUyM2MyZC1kYmI4LTRiZDAtODI0NS0xMzFmZGFhNmY2ZmFAY2FyYm9uLnN1cGVyIiwiYXVkIjoiY2hvcmVvOmRlcGxveW1lbnQ6c2FuZGJveCIsIm9yZ2FuaXphdGlvbiI6eyJ1dWlkIjoiYzMyNjE4Y2YtMzg5ZC00NGYxLTkzZWUtYjY3YTM0NjhhYWUzIn0sImlzcyI6Imh0dHBzOlwvXC9zdHMuY2hvcmVvLmRldjo0NDNcL2FwaVwvYW1cL3B1Ymxpc2hlclwvdjJcL2FwaXNcL2ludGVybmFsLWtleSIsImtleXR5cGUiOiJTQU5EQk9YIiwic3Vic2NyaWJlZEFQSXMiOlt7InN1YnNjcmliZXJUZW5hbnREb21haW4iOm51bGwsIm5hbWUiOiJlcGljLWZoaXItYWRtaW5pc3RyYXRpb24gLSBFUElDIEZISVIgUGF0aWVudCBBUEkiLCJjb250ZXh0IjoiXC9jMzI2MThjZi0zODlkLTQ0ZjEtOTNlZS1iNjdhMzQ2OGFhZTNcL2Voci1jb25uZWN0c1wvZXBpYy1maGlyLWFkbWluaXN0cmF0aW9uXC92MS4wIiwicHVibGlzaGVyIjoiY2hvcmVvX3Byb2RfYXBpbV9hZG1pbiIsInZlcnNpb24iOiJ2MS4wIiwic3Vic2NyaXB0aW9uVGllciI6bnVsbH1dLCJleHAiOjE3NTQ0Nzc2NDMsInRva2VuX3R5cGUiOiJJbnRlcm5hbEtleSIsImlhdCI6MTc1NDQ3NzA0MywianRpIjoiZmI2YTJmMzQtNjY4ZS00ZjFiLWI5NWQtZTkxMmJkMDc2ZTZhIn0.TD2NFSMctSgFVXr7e3FCSVoq4J86aKtyb8biXsoOz597EuTOptlFWhsKomocKVmt78McJqdm1FCCQsjNZHDyeaXefWchcERUZ0TdPVMEWdyxAuR1nfnrMjSO1frVYByUnfUFXrgKu6V4YsHAsbWmqfBrJmhjFwm8EgqTbGuJ3Zq4ITBw9Kc4AAunEtaF48EhwetMWJeaeVScixcBZ_93ChR2XjVJ7eOv4GrVbLun5LjzqMTWMdc9E8A1l1L1d15GruT_kZuMhkE28Wb6sGLV_k8k6p2HQ47XLgiGNS9lT0Zlzg718AgfhkiQH4KffbLgFobhNjvaprDjx8-G9Hnfay2K2RcEEYt7gHy2UKUmAiGDt2g4j8g834cKMPbTX-1wLU_ax_38HSFw9z3ZJQ38GQNF3Bn4GnlF6TW63F-_Im9du7DX7GeUSLF9HV0mVMxTsT4vu32tiOpSJxsei4l-VXeebvsCPnPWO19i9I3pvPKjVx7n_SRvcuW_YH_dq4_ImwUBTynHZgXhxYzNYOkdUlYS5fYSaHFyFLoYVsRVPpnyF6uMRWaEF1rBT12uwv_hIMhTggnOJeiRxZ84FUCn1qvH2GfqWgTA7jQVO352pzhfQzuQAHjl3X9DW9j4Hefhmp-AW6exc0dhPWsiN6A0KYm3Ium7aTzAYkNltEyTGDk"
+							}
+						],
+						"url": {
+							"raw": "https://c32618cf-389d-44f1-93ee-b67a3468aae3-dev.e1-us-east-azure.choreoapis.dev/ehr-connects/epic-fhir-administration/v1.0/fhir/r4/Patient/eAB3mDIBBcyUKviyzrxsnAw3",
+							"protocol": "https",
+							"host": [
+								"c32618cf-389d-44f1-93ee-b67a3468aae3-dev",
+								"e1-us-east-azure",
+								"choreoapis",
+								"dev"
+							],
+							"path": [
+								"ehr-connects",
+								"epic-fhir-administration",
+								"v1.0",
+								"fhir",
+								"r4",
+								"Patient",
+								"eAB3mDIBBcyUKviyzrxsnAw3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
