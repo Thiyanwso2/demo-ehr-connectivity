@@ -45,7 +45,7 @@ function init() returns error? {
                 fhir:FHIRConnector connector = check new (connectorConfig);
                 clients[config.CONNECTION_NAME] = connector;
             }
-            "HTTP" => {
+            "REST" => {
                 string serverUrl = <string>config.SERVER_URL;
                 connector:Client imagingClient = check new ({}, serverUrl);
                 clients[config.CONNECTION_NAME] = imagingClient;
