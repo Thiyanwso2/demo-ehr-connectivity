@@ -20,7 +20,6 @@ function init() returns error? {
                 string host = <string>config.HOST;
                 hl7:HL7Client hl7Client = check new (host, port);
                 clients[config.CONNECTION_NAME] = hl7Client;
-                return;
             }
             "FHIR" => {
                 string serverUrl = <string>config.SERVER_URL;
@@ -45,13 +44,11 @@ function init() returns error? {
                 };
                 fhir:FHIRConnector connector = check new (connectorConfig);
                 clients[config.CONNECTION_NAME] = connector;
-                return;
             }
             "HTTP" => {
                 string serverUrl = <string>config.SERVER_URL;
                 http:Client httpClient = check new (serverUrl);
                 clients[config.CONNECTION_NAME] = httpClient;
-                return;
             }
         }
     }
