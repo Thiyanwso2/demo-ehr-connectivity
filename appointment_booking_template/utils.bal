@@ -1,5 +1,5 @@
 // import ballerinax/health.fhir.r4.international401
-
+import thiyanarumugam/imaging.connector;
 import ballerina/http;
 import ballerina/log;
 import ballerina/url;
@@ -47,8 +47,8 @@ function init() returns error? {
             }
             "HTTP" => {
                 string serverUrl = <string>config.SERVER_URL;
-                http:Client httpClient = check new (serverUrl);
-                clients[config.CONNECTION_NAME] = httpClient;
+                connector:Client imagingClient = check new ({}, serverUrl);
+                clients[config.CONNECTION_NAME] = imagingClient;
             }
         }
     }
@@ -123,11 +123,12 @@ public function processFHIRMessage(SynapseBookingMessage message) returns json|e
 }
 
 public function processHTTP(SynapseBookingMessage message) returns json|error {
-    // if httpClient is Client{
-    //     Client clientResult = <Client>httpClient;
-    //     ImagingStudy imagingStudy = clientResult->:/imagingStudy.post(appt);
-    // }
-    return {};
+
+    connector:Client 'client = <connector:Client>clients.get(message.connectionName);
+    connector:AppointmentImaging mapAppointmentDataToImagingDataResult = mapAppointmentDataToImagingData(message.data);
+    connector:AppointmentImaging imagingStudy = check 'client->/imagingStudy.post(mapAppointmentDataToImagingDataResult);
+
+    return imagingStudy.toJson();
 }
 
 # Get Encoded URI for a given value.

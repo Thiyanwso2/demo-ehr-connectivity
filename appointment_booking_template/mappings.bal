@@ -1,8 +1,7 @@
 import ballerina/uuid;
 import ballerinax/health.fhir.r4.international401;
 import ballerinax/health.hl7v24;
-import ballerinax/health.clients.fhir;
-import ballerinax/health.hl7v2;
+import thiyanarumugam/imaging.connector;
 
 function createBookingResponseForHL7(hl7v24:ACK sendHl7MessageResult, string connectionName) returns json {
     if sendHl7MessageResult.msa.msa1 == "AA" {
@@ -132,3 +131,14 @@ public function mapAppointmentDataToFHIR(AppointmentData custom) returns interna
         }
     ]
 };
+
+public function mapAppointmentDataToImagingData(AppointmentData appointment) returns connector:AppointmentImaging {
+    connector:AppointmentImaging|error cloneWithType = imagingData.cloneWithType(connector:AppointmentImaging);
+    if cloneWithType is error {
+
+    } else {
+        return cloneWithType;
+    }
+
+    return {practitioner: (), patient: {id: "", displayName: ""}, end: "", location: {id: "", displayName: ""}, 'start: "", status: "pending",resourceType: ""};
+}

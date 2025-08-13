@@ -6,3 +6,8 @@ distribution = "2201.12.3"
 
 [build-options]
 observabilityIncluded = true
+
+[[dependency]]
+org = "thiyanarumugam"
+name = "imaging.service.client"
+version="0.1.0"

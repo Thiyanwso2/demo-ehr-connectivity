@@ -1,103 +1,139 @@
-openapi: 3.0.1
+openapi: 3.0.3
 info:
-  title: ImagingStudy API
+  title: Imaging Study Appointment API
   version: 1.0.0
+  description: API for managing imaging or lab session appointments.
+
 servers:
   - url: http://localhost:8585
+
 paths:
   /imagingStudy:
     post:
-      summary: Create a new ImagingStudy resource
+      summary: Create a new imaging or lab appointment
+      operationId: createImagingStudy
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ImagingStudy'
+              $ref: '#/components/schemas/AppointmentImaging'
       responses:
-        '202':
-          description: ImagingStudy successfully created
+        "202":
+          description: Appointment created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ImagingStudy'
-        '400':
-          description: Invalid input payload
+                $ref: '#/components/schemas/AppointmentImaging'
+        "400":
+          description: Invalid request payload
   /imagingStudy/{id}:
     get:
-      summary: Get ImagingStudy by ID
+      summary: Get an imaging or lab appointment by ID
+      operationId: getImagingStudyById
       parameters:
-        - name: id
-          in: path
+        - in: path
+          name: id
           required: true
           schema:
             type: string
+          description: Appointment ID
       responses:
-        '200':
-          description: ImagingStudy resource found
+        "200":
+          description: Appointment found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ImagingStudy'
-        '404':
-          description: ImagingStudy not found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
+                $ref: '#/components/schemas/AppointmentImaging'
+        "404":
+          description: Appointment not found
+
 components:
   schemas:
-    ImagingStudy:
+    AppointmentImaging:
       type: object
+      required:
+        - resourceType
+        - status
+        - start
+        - end
+        - patient
+        - location
       properties:
         resourceType:
           type: string
-          example: ImagingStudy
+          example: Appointment
         id:
           type: integer
-          example: 1
+          example: 1001
         status:
           type: string
-          example: available
-        subject:
+          enum: [proposed, pending, booked, arrived, fulfilled, cancelled, noshow]
+          example: booked
+        appointmentType:
           type: string
-          example: Patient/123
-        started:
+          example: Imaging Session
+        start:
           type: string
           format: date-time
-          example: "2025-08-06T10:00:00Z"
-        series:
-          type: array
-          items:
-            $ref: '#/components/schemas/Series'
-    Series:
-      type: object
-      properties:
-        uid:
+          example: 2025-08-20T10:30:00Z
+        end:
           type: string
-          example: "1.2.840.113619.2.55.3.604688464.501.1598465092.467"
-        modality:
-          type: string
-          example: "CT"
+          format: date-time
+          example: 2025-08-20T11:00:00Z
         description:
           type: string
-          example: "CT Chest with contrast"
-        instances:
+          example: MRI Brain Scan with contrast
+        patient:
+          $ref: '#/components/schemas/PatientReference'
+        location:
+          $ref: '#/components/schemas/LocationReference'
+        practitioner:
+          $ref: '#/components/schemas/PractitionerReference'
+        serviceDetails:
           type: array
           items:
-            $ref: '#/components/schemas/Instance'
-    Instance:
+            $ref: '#/components/schemas/ServiceDetail'
+
+    PatientReference:
+      type: object
+      required: [id, displayName]
+      properties:
+        id:
+          type: string
+          example: pat-2024
+        displayName:
+          type: string
+          example: John Doe
+
+    LocationReference:
+      type: object
+      required: [id, displayName]
+      properties:
+        id:
+          type: string
+          example: loc-001
+        displayName:
+          type: string
+          example: Radiology Department - Main Hospital
+
+    PractitionerReference:
       type: object
       properties:
-        uid:
+        id:
           type: string
-          example: "1.2.840.113619.2.55.3.604688464.501.1598465092.468"
-        sopClass:
+          example: prac-451
+        displayName:
           type: string
-          example: "1.2.840.10008.5.1.4.1.1.2"
-        title:
+          example: Dr. Sarah Wilson
+
+    ServiceDetail:
+      type: object
+      required: [code]
+      properties:
+        code:
           type: string
-          example: "Chest CT Image"
+          example: MRI
+        description:
+          type: string
+          example: Magnetic Resonance Imaging - Brain
