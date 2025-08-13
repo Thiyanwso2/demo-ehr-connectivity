@@ -68,25 +68,26 @@ public function processHL7Message(SynapseBookingMessage message) returns json|er
             );
 
     } else if parsedMessage.name.startsWith("ORM") {
-        if hl7Client is hl7:HL7Client {
-            hl7v2:Message|error? sendHl7MessageResult = (<hl7:HL7Client>hl7Client)->sendMessage(parsedMessage);
-            if sendHl7MessageResult is error {
-                log:printError("Failed to send HL7v2 message to HL7 service", sendHl7MessageResult);
-                return error("Failed to send HL7v2 message to HL7 service",
+        byte[]|hl7v2:HL7Error encode = hl7v2:encode("2.4", parsedMessage);
+        if encode is byte[] {
+            log:printInfo("Mapped AppointmentData to HL7v2 ORM_O01 message: ", mappedData = check string:fromBytes(encode));
+        }
+        hl7v2:Message|error? sendHl7MessageResult = hl7Client->sendMessage(parsedMessage);
+        if sendHl7MessageResult is error {
+            log:printError("Failed to send HL7v2 message to HL7 service", sendHl7MessageResult);
+            return error("Failed to send HL7v2 message to HL7 service",
                     httpStatusCode = 500,
                     errorCode = "E020 SERVICE_UNAVAILABLE",
                     errorMessage = "Failed to send HL7v2 message to HL7 service: " + sendHl7MessageResult.message()
                 );
+        }
+        if sendHl7MessageResult is hl7v24:ACK {
+            if sendHl7MessageResult.msa.msa1 == "AA" {
+                log:printInfo("HL7v2 message acknowledged with success: " + sendHl7MessageResult.msa.msa1);
+            } else {
+                log:printWarn("HL7v2 Admit message acknowledged with non-success status: " + sendHl7MessageResult.msa.msa1);
             }
-            if sendHl7MessageResult is hl7v24:ACK {
-                if sendHl7MessageResult.msa.msa1 == "AA" {
-                    log:printInfo("HL7v2 message acknowledged with success: " + sendHl7MessageResult.msa.msa1);
-                } else {
-                    log:printWarn("HL7v2 Admit message acknowledged with non-success status: " + sendHl7MessageResult.msa.msa1);
-                }
-                json mapHL7ToJsonResult = createBookingResponseForHL7(sendHl7MessageResult, message.connectionName);
-                return mapHL7ToJsonResult;
-            }
+            return createBookingResponseForHL7(sendHl7MessageResult, message.connectionName);
         }
     } else {
         log:printError("Received unsupported HL7 message: " + parsedMessage.name);
@@ -103,19 +104,22 @@ public function processHL7Message(SynapseBookingMessage message) returns json|er
             );
 }
 
-public function processFHIR(SynapseBookingMessage message) returns json|error {
+public function processFHIRMessage(SynapseBookingMessage message) returns json|error {
 
     fhir:FHIRConnector connector = <fhir:FHIRConnector>clients.get(message.connectionName);
-    // fhir:FHIRResponse response = check (<fhir:FHIRConnector>connector)->getById("Patient", "12970723");
-    fhir:FHIRResponse fHIRResponse = check connector->create(fhir_appointment);
-    if fHIRResponse.httpStatusCode == 201{
-        return {
-            status: "success",
-            message: "Appointment created successfully in: " + message.connectionName
-        };
+    json jsonResult = mapAppointmentDataToFHIR(message.data).toJson();
+    log:printInfo("Mapped Appointment data to FHIR: ", mappedData = jsonResult);
+    fhir:FHIRResponse|fhir:FHIRError fHIRResponse = connector->create(jsonResult);
+    if fHIRResponse is fhir:FHIRError {
+        log:printError("Failed to create appointment", fHIRResponse);
+        return error("Failed to create appointment",
+            httpStatusCode = 500,
+            errorCode = "E022 FHIR_CREATION_ERROR",
+            errorMessage = "Failed to create appointment: " + fHIRResponse.message()
+        );
     }
-    
-    return error(string `"Appointment created successfully in: ${message.connectionName}`);
+    json bookingResponseForFHIR = createBookingResponseForFHIR(fHIRResponse, message.connectionName);
+    return bookingResponseForFHIR;
 }
 
 public function processHTTP(SynapseBookingMessage message) returns json|error {
