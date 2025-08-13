@@ -110,8 +110,9 @@ public function processHL7Message(SynapseBookingMessage message) returns json|er
 public function processFHIR(SynapseBookingMessage message) returns json|error {
 
     fhir:FHIRConnector connector = <fhir:FHIRConnector>clients.get(message.connectionName);
-    fhir:FHIRResponse response = check (<fhir:FHIRConnector>connector)->getById("Patient", "12970723");
-    return response.toJson();
+    // fhir:FHIRResponse response = check (<fhir:FHIRConnector>connector)->getById("Patient", "12970723");
+    fhir:FHIRResponse|fhir:FHIRError fHIRResponse = connector->create(fhir_appointment);
+    return (check fHIRResponse).toJson();
 }
 
 public function processHTTP(SynapseBookingMessage message) returns json|error {
