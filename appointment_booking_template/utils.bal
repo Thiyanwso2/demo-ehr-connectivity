@@ -87,7 +87,7 @@ public function processHL7Message(SynapseBookingMessage message) returns json|er
                 } else {
                     log:printWarn("HL7v2 Admit message acknowledged with non-success status: " + sendHl7MessageResult.msa.msa1);
                 }
-                json mapHL7ToJsonResult = mapHL7ToJson(sendHl7MessageResult);
+                json mapHL7ToJsonResult = createBookingResponseForHL7(sendHl7MessageResult, message.connectionName);
                 return mapHL7ToJsonResult;
             }
         }

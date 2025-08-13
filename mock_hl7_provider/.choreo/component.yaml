@@ -20,5 +20,5 @@ endpoints:
     # +optional Network level visibilities of the endpoint.
     # Accepted values: Project|Organization|Public(Default).
     networkVisibilities: 
-      # - Public
+      - Organization
       - Project
