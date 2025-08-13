@@ -125,10 +125,20 @@ public function processFHIRMessage(SynapseBookingMessage message) returns json|e
 public function processHTTP(SynapseBookingMessage message) returns json|error {
 
     connector:Client 'client = <connector:Client>clients.get(message.connectionName);
-    connector:AppointmentImaging mapAppointmentDataToImagingDataResult = mapAppointmentDataToImagingData(message.data);
-    connector:AppointmentImaging imagingStudy = check 'client->/imagingStudy.post(mapAppointmentDataToImagingDataResult);
-
-    return imagingStudy.toJson();
+    connector:AppointmentImaging mapAppointmentDataToImagingDataResult = mapAppointmentDataToREST(message.data);
+    connector:AppointmentImaging|error imagingStudy = 'client->/imagingStudy.post(mapAppointmentDataToImagingDataResult);
+    log:printInfo("Mapped Appointment data to Imaging Study: ", mappedData = mapAppointmentDataToImagingDataResult.toJson());
+    if imagingStudy is error {
+        log:printError("Failed to create appointment in Imaging Study", imagingStudy);
+        return error("Failed to create appointment in Imaging Study",
+            httpStatusCode = 500,
+            errorCode = "E023 IMAGING_CREATION_ERROR",
+            errorMessage = "Failed to create appointment in Imaging Study: " + imagingStudy.message()
+        );
+    }
+    log:printInfo("Successfully created appointment in Imaging Lab", imagingStudy = imagingStudy.toJson());
+    json bookingResponseForREST = createBookingResponseForREST(imagingStudy, message.connectionName);
+    return bookingResponseForREST;
 }
 
 # Get Encoded URI for a given value.

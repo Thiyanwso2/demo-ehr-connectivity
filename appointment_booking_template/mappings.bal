@@ -1,9 +1,10 @@
 import ballerina/uuid;
+import ballerina/lang.'int as int;
 import ballerinax/health.fhir.r4.international401;
 import ballerinax/health.hl7v24;
-import thiyanarumugam/imaging.connector;
 import ballerinax/health.hl7v2;
 import ballerinax/health.clients.fhir;
+import thiyanarumugam/imaging.connector;
 
 function createBookingResponseForHL7(hl7v24:ACK sendHl7MessageResult, string connectionName) returns json {
     if sendHl7MessageResult.msa.msa1 == "AA" {
@@ -38,6 +39,14 @@ function createBookingResponseForFHIR(fhir:FHIRResponse fhirResponse, string con
     return {
         status: "error",
         message: "Failed to create appointment in: " + connectionName
+    };
+}
+
+function createBookingResponseForREST(connector:AppointmentImaging imagingStudy, string connectionName) returns json {
+    return {
+        status: "success",
+        message: "Appointment created successfully in: " + connectionName,
+        data: imagingStudy.toJson()
     };
 }
 
@@ -134,13 +143,39 @@ public function mapAppointmentDataToFHIR(AppointmentData custom) returns interna
     ]
 };
 
-public function mapAppointmentDataToImagingData(AppointmentData appointment) returns connector:AppointmentImaging {
-    connector:AppointmentImaging|error cloneWithType = imagingData.cloneWithType(connector:AppointmentImaging);
-    if cloneWithType is error {
+public function mapAppointmentDataToREST(AppointmentData appointment) returns connector:AppointmentImaging => {
+    resourceType: "Appointment",
+    id: getIntFromString(appointment.id),
+    status: <"proposed"|"pending"|"booked"|"arrived"|"fulfilled"|"cancelled"|"noshow">appointment.status,
+    appointmentType: appointment.serviceType,
+    'start: appointment.startTime,
+    end: appointment.endTime,
+    description: appointment.reasonText,
+    patient: {
+        id: appointment.patientId,
+        displayName: appointment.patientGivenName + " " + appointment.patientFamilyName
+    },
+    location: {
+        id: appointment.locationId,
+        displayName: (appointment.locationName != ()) ? <string>appointment.locationName : appointment.locationId
+    },
+    practitioner: {
+        id: appointment.practitionerId,
+        displayName: (appointment.practitionerName != ()) ? <string>appointment.practitionerName : appointment.practitionerId
+    },
+    serviceDetails: (appointment.serviceType != ()) ? [
+        {
+            code: <string>appointment.serviceType,
+            description: appointment.reasonText
+        }
+    ] : ()
+};
 
-    } else {
-        return cloneWithType;
+// Helper function to safely convert string to int
+function getIntFromString(string? value) returns int? {
+    if value is string {
+        int|error result = int:fromString(value);
+        return result is int ? result : ();
     }
-
-    return {practitioner: (), patient: {id: "", displayName: ""}, end: "", location: {id: "", displayName: ""}, 'start: "", status: "pending",resourceType: ""};
+    return ();
 }
