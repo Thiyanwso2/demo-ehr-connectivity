@@ -26,7 +26,7 @@ service /api on new http:Listener(8080) {
                     }
                     "HTTP" => {
                         log:printInfo("Routing to HTTP processing method");
-                        return processHTTP(message);
+                        return check processHTTP(message);
                     }
                     _ => {
                         return error("Unsupported protocol: " + protocol);
