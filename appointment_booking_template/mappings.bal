@@ -1,12 +1,37 @@
 import ballerina/uuid;
 import ballerinax/health.fhir.r4.international401;
 import ballerinax/health.hl7v24;
+import ballerinax/health.clients.fhir;
+import ballerinax/health.hl7v2;
 
 function createBookingResponseForHL7(hl7v24:ACK sendHl7MessageResult, string connectionName) returns json {
     if sendHl7MessageResult.msa.msa1 == "AA" {
+        do {
+	        return {
+	            status: "success",
+	            message: "Appointment created successfully in: " + connectionName,
+	            data: check string:fromBytes(check hl7v2:encode("2.4", sendHl7MessageResult))
+	        };
+        } on fail var e {
+            return {
+                status: "error",
+                message: "Failed to create booking response for HL7",
+                data: e.toString()
+            };
+        }
+    }
+    return {
+        status: "error",
+        message: "Failed to create appointment in: " + connectionName
+    };
+}
+
+function createBookingResponseForFHIR(fhir:FHIRResponse fhirResponse, string connectionName) returns json {
+    if fhirResponse.httpStatusCode == 201 {
         return {
             status: "success",
-            message: "Appointment created successfully in: " + connectionName
+            message: "Appointment created successfully in: " + connectionName,
+            data: fhirResponse.'resource.toJson()
         };
     }
     return {
@@ -68,7 +93,7 @@ public function mapAppointmentDataToFHIR(AppointmentData custom) returns interna
     participant: [
         {
             actor: {
-                reference: "Practitioner/" + custom.practitionerId
+                reference: "Patient/" + custom.patientId
             },
             status: "needs-action"
         },
