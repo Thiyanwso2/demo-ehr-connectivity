@@ -8,6 +8,6 @@ distribution = "2201.12.3"
 observabilityIncluded = true
 
 [[dependency]]
-org = "thiyanarumugam"
+org = "wso2healthcare"
 name = "imaging.service.client"
 version="0.1.0"

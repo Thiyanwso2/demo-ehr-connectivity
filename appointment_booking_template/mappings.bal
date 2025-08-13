@@ -2,9 +2,9 @@ import ballerina/uuid;
 import ballerina/lang.'int as int;
 import ballerinax/health.fhir.r4.international401;
 import ballerinax/health.hl7v24;
+import wso2healthcare/imaging.connector;
 import ballerinax/health.hl7v2;
 import ballerinax/health.clients.fhir;
-import thiyanarumugam/imaging.connector;
 
 function createBookingResponseForHL7(hl7v24:ACK sendHl7MessageResult, string connectionName) returns json {
     if sendHl7MessageResult.msa.msa1 == "AA" {
