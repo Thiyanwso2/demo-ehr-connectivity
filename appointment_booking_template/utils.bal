@@ -107,8 +107,15 @@ public function processFHIR(SynapseBookingMessage message) returns json|error {
 
     fhir:FHIRConnector connector = <fhir:FHIRConnector>clients.get(message.connectionName);
     // fhir:FHIRResponse response = check (<fhir:FHIRConnector>connector)->getById("Patient", "12970723");
-    fhir:FHIRResponse|fhir:FHIRError fHIRResponse = connector->create(fhir_appointment);
-    return (check fHIRResponse).toJson();
+    fhir:FHIRResponse fHIRResponse = check connector->create(fhir_appointment);
+    if fHIRResponse.httpStatusCode == 201{
+        return {
+            status: "success",
+            message: "Appointment created successfully in: " + message.connectionName
+        };
+    }
+    
+    return error(string `"Appointment created successfully in: ${message.connectionName}`);
 }
 
 public function processHTTP(SynapseBookingMessage message) returns json|error {
