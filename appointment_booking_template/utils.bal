@@ -9,10 +9,6 @@ import ballerinax/health.hl7v2;
 import ballerinax/health.hl7v23 as _;
 import ballerinax/health.hl7v24;
 
-// hl7:HL7Client? hl7Client = ();
-// Client? httpClient = ();
-// fhir:FHIRConnector? connector = ();
-
 map<any> clients = {};
 
 function init() returns error? {
@@ -20,15 +16,17 @@ function init() returns error? {
     foreach Config config in configs {
         match config.PROTOCOL.toUpperAscii() {
             "HL7" => {
-                int tempPort = <int>config.PORT;
-                hl7:HL7Client hl7Client = check new (config.SERVER_URL, tempPort);
+                int port = <int>config.PORT;
+                string host = <string>config.HOST;
+                hl7:HL7Client hl7Client = check new (host, port);
                 clients[config.CONNECTION_NAME] = hl7Client;
                 return;
             }
             "FHIR" => {
-                string stringResult = <string>config.TOKEN_URL;
-                string stringResult2 = <string>config.CLIENT_ID;
-                string c = <string>config.CLIENT_SECRET;
+                string serverUrl = <string>config.SERVER_URL;
+                string tokenUrl = <string>config.TOKEN_URL;
+                string clientId = <string>config.CLIENT_ID;
+                string clientSecret = <string>config.CLIENT_SECRET;
                 string[] scopes = [];
                 (string[] & readonly)? temp = config.SCOPES;
                 if temp is string[] & readonly {
@@ -36,13 +34,13 @@ function init() returns error? {
                 }
 
                 http:ClientAuthConfig authConfig = {
-                    tokenUrl: stringResult,
-                    clientId: stringResult2,
-                    clientSecret: c,
+                    tokenUrl: tokenUrl,
+                    clientId: clientId,
+                    clientSecret: clientSecret,
                     scopes: scopes
                 };
                 fhir:FHIRConnectorConfig connectorConfig = {
-                    baseURL: config.SERVER_URL,
+                    baseURL: serverUrl,
                     authConfig: authConfig
                 };
                 fhir:FHIRConnector connector = check new (connectorConfig);
@@ -50,7 +48,8 @@ function init() returns error? {
                 return;
             }
             "HTTP" => {
-                http:Client httpClient = check new (config.SERVER_URL);
+                string serverUrl = <string>config.SERVER_URL;
+                http:Client httpClient = check new (serverUrl);
                 clients[config.CONNECTION_NAME] = httpClient;
                 return;
             }

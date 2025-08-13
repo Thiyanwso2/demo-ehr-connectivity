@@ -135,7 +135,8 @@ public type AppointmentData record {|
 public type Config record {
     string CONNECTION_NAME; // Possible values: "Cerner", "Epic", "custom"
     string PROTOCOL; // Possible values: "hl7", "fhir", "custom"
-    string SERVER_URL;
+    string SERVER_URL?;
+    string HOST?;
     int PORT?;
     string TOKEN_URL?;
     string CLIENT_ID?;
