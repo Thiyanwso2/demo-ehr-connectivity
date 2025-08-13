@@ -110,8 +110,8 @@ public type AppointmentData record {|
     string patientMrn?;          // medical record number
     string patientGivenName;
     string patientFamilyName;
-    string patientGender?;       // "male" | "female" | "other" | "unknown"
-    string patientBirthDate?;    // yyyy-mm-dd
+    string patientGender;       // "male" | "female" | "other" | "unknown"
+    string patientBirthDate;    // yyyy-mm-dd
 
     // Visit / scheduling details
     string status;               // proposed | pending | booked | arrived | fulfilled | cancelled | noshow
@@ -122,9 +122,9 @@ public type AppointmentData record {|
     string reasonText?;          // human-readable reason
 
     // Location & practitioner
-    string locationId?;          // internal location code
+    string locationId;          // internal location code
     string locationName?;
-    string practitionerId?;
+    string practitionerId;
     string practitionerName?;
 
     // Contact

@@ -62,8 +62,7 @@ function init() returns error? {
 public function processHL7Message(SynapseBookingMessage message) returns json|error {
 
     hl7:HL7Client hl7Client = <hl7:HL7Client>clients.get(message.connectionName);
-    string mapJsonToHL7Result = mapAppointmentDataToHL7(message.data);
-    hl7v2:Message|hl7v2:HL7Error parsedMessage = hl7v2:parse(mapJsonToHL7Result);
+    hl7v2:Message|hl7v2:HL7Error parsedMessage = mapAppointmentDataToHL7(message.data);
     if parsedMessage is hl7v2:HL7Error {
         return error("Failed to parse the HL7 message",
                 httpStatusCode = 400,
@@ -71,7 +70,7 @@ public function processHL7Message(SynapseBookingMessage message) returns json|er
                 errorMessage = "Failed to parse the HL7 message"
             );
 
-    } else if parsedMessage.name.startsWith("ADT") {
+    } else if parsedMessage.name.startsWith("ORM") {
         if hl7Client is hl7:HL7Client {
             hl7v2:Message|error? sendHl7MessageResult = (<hl7:HL7Client>hl7Client)->sendMessage(parsedMessage);
             if sendHl7MessageResult is error {
