@@ -22,7 +22,7 @@ service /api on new http:Listener(8080) {
                     }
                     "FHIR" => {
                         log:printInfo("Routing to FHIR processing method");
-                        return processFHIR(message);
+                        return processFHIRMessage(message);
                     }
                     "HTTP" => {
                         log:printInfo("Routing to HTTP processing method");
