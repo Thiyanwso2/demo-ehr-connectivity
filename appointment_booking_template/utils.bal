@@ -56,9 +56,14 @@ function init() returns error? {
 }
 
 // Stub processing methods
-public function processHL7Message(SynapseBookingMessage message) returns json|error {
-
-    hl7:HL7Client hl7Client = <hl7:HL7Client>clients.get(message.connectionName);
+public function processHL7Message(SynapseBookingMessage message, hl7:HL7Client? 'client) returns json|error {
+    hl7:HL7Client hl7Client;
+    if 'client is () {
+        hl7Client = <hl7:HL7Client>clients.get(message.connectionName);
+    } else {
+        hl7Client = <hl7:HL7Client>'client;
+    }
+    // hl7:HL7Client hl7Client = <hl7:HL7Client>clients.get(message.connectionName);
     hl7v2:Message|hl7v2:HL7Error parsedMessage = mapAppointmentDataToHL7(message.data);
     if parsedMessage is hl7v2:HL7Error {
         return error("Failed to parse the HL7 message",
@@ -104,9 +109,14 @@ public function processHL7Message(SynapseBookingMessage message) returns json|er
             );
 }
 
-public function processFHIRMessage(SynapseBookingMessage message) returns json|error {
+public function processFHIRMessage(SynapseBookingMessage message, fhir:FHIRConnector? 'client) returns json|error {
 
-    fhir:FHIRConnector connector = <fhir:FHIRConnector>clients.get(message.connectionName);
+    fhir:FHIRConnector connector;
+    if 'client is () {
+        connector = <fhir:FHIRConnector>clients.get(message.connectionName);
+    } else {
+        connector = <fhir:FHIRConnector>'client;
+    }
     json jsonResult = mapAppointmentDataToFHIR(message.data).toJson();
     log:printInfo("Mapped Appointment data to FHIR: ", mappedData = jsonResult);
     fhir:FHIRResponse|fhir:FHIRError fHIRResponse = connector->create(jsonResult);
@@ -122,9 +132,14 @@ public function processFHIRMessage(SynapseBookingMessage message) returns json|e
     return bookingResponseForFHIR;
 }
 
-public function processRESTMessage(SynapseBookingMessage message) returns json|error {
+public function processRESTMessage(SynapseBookingMessage message, connector:Client? imagingClient) returns json|error {
 
-    connector:Client 'client = <connector:Client>clients.get(message.connectionName);
+    connector:Client 'client;
+    if imagingClient is () {
+        'client = <connector:Client>clients.get(message.connectionName);
+    } else {
+        'client = <connector:Client>imagingClient;
+    }
     connector:AppointmentImaging mapAppointmentDataToImagingDataResult = mapAppointmentDataToREST(message.data);
     connector:AppointmentImaging|error imagingStudy = 'client->/imagingStudy.post(mapAppointmentDataToImagingDataResult);
     log:printInfo("Mapped Appointment data to Imaging Study: ", mappedData = mapAppointmentDataToImagingDataResult.toJson());
