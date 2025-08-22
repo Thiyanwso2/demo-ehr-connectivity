@@ -134,7 +134,7 @@ public type AppointmentData record {|
 
 public type Config record {
     string CONNECTION_NAME; // Possible values: "Cerner", "Epic", "custom"
-    string PROTOCOL; // Possible values: "hl7", "fhir", "custom"
+    string PROTOCOL; // Possible values: "hl7", "fhir", "custom", "any"
     string SERVER_URL?;
     string HOST?;
     int PORT?;
@@ -142,4 +142,19 @@ public type Config record {
     string CLIENT_ID?;
     string CLIENT_SECRET?;
     string[] SCOPES?;
+};
+
+public type ProtocolResult record {
+    string protocol;
+    string status;
+    json|string result?;
+    string errorMessage?;
+};
+
+public type AggregatedResponse record {
+    string overallStatus;
+    string message;
+    ProtocolResult[] results;
+    int successCount;
+    int totalCount;
 };

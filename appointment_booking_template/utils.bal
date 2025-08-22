@@ -122,7 +122,7 @@ public function processFHIRMessage(SynapseBookingMessage message) returns json|e
     return bookingResponseForFHIR;
 }
 
-public function processHTTP(SynapseBookingMessage message) returns json|error {
+public function processRESTMessage(SynapseBookingMessage message) returns json|error {
 
     connector:Client 'client = <connector:Client>clients.get(message.connectionName);
     connector:AppointmentImaging mapAppointmentDataToImagingDataResult = mapAppointmentDataToREST(message.data);
